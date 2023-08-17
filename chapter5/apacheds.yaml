@@ -63,7 +63,7 @@ data:
     givenName: Matt
     sn: Mosley
     samAccountName: mmosley
-    mail: mmosley@tremolo.dev
+    mail: mmosley@ameto.io
     title: Tester
     telephoneNumber: 123-456-7890
     userPassword: start123
@@ -74,7 +74,7 @@ data:
     givenName: Jennifer
     sn: Jackson
     samAccountName: jjackson
-    mail: jjackson@tremolo.dev
+    mail: jjackson@ameto.io
     title: Tester
     telephoneNumber: 123-456-7890
     userPassword: start123
@@ -85,7 +85,7 @@ data:
     givenName: App
     sn: Dev
     samAccountName: app-dev
-    mail: app-dev@tremolo.dev
+    mail: app-dev@ameto.io
     title: Application Developer
     telephoneNumber: 123-456-7890
     userPassword: start123
