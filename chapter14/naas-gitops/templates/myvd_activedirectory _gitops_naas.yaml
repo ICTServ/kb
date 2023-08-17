@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: myvd-book
+  name: myvd-ameto
   namespace: {{.Release.Namespace}}
   labels:
     app.kubernetes.io/name: openunison

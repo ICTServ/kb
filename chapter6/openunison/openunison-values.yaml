@@ -1,7 +1,7 @@
 network:
-  openunison_host: "k8sou.apps.IPADDR.nip.io"
-  dashboard_host: "k8sdb.apps.IPADDR.nip.io"
-  api_server_host: "k8sapi.apps.IPADDR.nip.io"
+  openunison_host: "ou.kca.ameto.io"
+  dashboard_host: "db.kca.ameto.io"
+  api_server_host: "api.kca.ameto.io"
   session_inactivity_timeout_seconds: 900
   k8s_url: https://0.0.0.0:6443
   force_redirect_to_tls: false
@@ -13,16 +13,16 @@ network:
 
 
 cert_template:
-  ou: "Kubernetes"
-  o: "MyOrg"
-  l: "My Cluster"
-  st: "State of Cluster"
-  c: "MyCountry"
+  ou: "kb"
+  o: "Ameto.io"
+  l: "kca"
+  st: "AA"
+  c: "ET"
 
 #image: "docker.io/tremolosecurity/openunison-k8s-login-activedirectory:latest"
 image: docker.io/tremolosecurity/openunison-k8s:latest
 myvd_config_path: "WEB-INF/myvd.conf"
-k8s_cluster_name: kubernetes
+k8s_cluster_name: kca
 enable_impersonation: true
 
 impersonation:
@@ -96,4 +96,4 @@ openunison:
   enable_provisioning: false
   use_standard_jit_workflow: true
 
-myvd_configmap: myvd-book
+myvd_configmap: myvd-ameto

@@ -95,4 +95,4 @@ openunison:
     image: docker.io/tremolosecurity/openunison-k8s-html
   enable_provisioning: false
 
-myvd_configmap: myvd-book
+myvd_configmap: myvd-ameto

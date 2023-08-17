@@ -22,7 +22,7 @@ echo "Helm Repo URL $REPO_URL"
 
 echo "Deploying the Kubernetes Dashboard"
 
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v3.0.0-alpha0/charts/kubernetes-dashboard.yaml
 
 echo "Deploying ActiveDirectory (ApacheDS)"
 
@@ -43,7 +43,7 @@ kubectl create ns openunison
 
 echo "Pre-configuring OpenUnison LDAP"
 
-kubectl create -f ../../chapter5/myvd-book.yaml
+kubectl create -f ../../chapter5/myvd-ameto.yaml
 
 echo "Deploying the OpenUnison Operator"
 

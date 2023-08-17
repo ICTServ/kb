@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: myvd-book
+  name: myvd-ameto
   namespace: openunison
 data:
   myvd.conf: |-

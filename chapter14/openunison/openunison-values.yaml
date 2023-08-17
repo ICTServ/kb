@@ -123,7 +123,7 @@ openunison:
         admin_group: "CN=openunison-admins,CN=Users,DC=ent2k12,DC=domain,DC=com"
         cluster_admin_group: "CN=k8s_login_ckuster_admins,CN=Users,DC=ent2k12,DC=domain,DC=com"
 
-myvd_configmap: myvd-book
+myvd_configmap: myvd-ameto
 
 database:
   hibernate_dialect: org.hibernate.dialect.MySQL5InnoDBDialect

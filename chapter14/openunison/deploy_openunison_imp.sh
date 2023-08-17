@@ -57,7 +57,7 @@ kubectl create ns openunison
 
 echo "Pre-configuring OpenUnison LDAP"
 
-kubectl create -f ../../chapter5/myvd-book.yaml
+kubectl create -f ../../chapter5/myvd-ameto.yaml
 
 echo "Deploying the OpenUnison Operator"
 

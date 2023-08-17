@@ -47,7 +47,7 @@ kubectl label ns openunison istio-injection=enabled
 
 echo "Pre-configuring OpenUnison LDAP"
 
-kubectl create -f ../chapter5/myvd-book.yaml
+kubectl create -f ../chapter5/myvd-ameto.yaml
 
 echo "Deploying the OpenUnison Operator"
 
