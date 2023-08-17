@@ -16,9 +16,13 @@ fi
 
 echo "Helm Repo URL $REPO_URL"
 
+if [[ -z "${TS_OPERATOR_IMAGE}" ]]; then
+	OP_IMAGE="docker.io/tremolosecurity/openunison-k8s-operator"
+else
+	OP_IMAGE=$TS_OPERATOR_IMAGE
+fi
 
-
-
+echo "OpenUnison Operator Image $OP_IMAGE"
 
 echo "Deploying the Kubernetes Dashboard"
 
@@ -26,28 +30,28 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/a
 
 echo "Deploying ActiveDirectory (ApacheDS)"
 
-kubectl apply -f ../../chapter5/apacheds.yaml
-
-while [[ $(kubectl get pods -l app=apacheds -n activedirectory -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do echo "waiting for apacheds to be running" && sleep 1; done
+kubectl apply -f ../chapter5/apacheds.yaml
 
 echo "Adding helm repo"
 
 helm repo add $REPO_NAME $REPO_URL
 helm repo update
 
-
 echo "Creating openunison namespace"
 
 kubectl create ns openunison
 
+echo "Labeling openunison namespace for istio sidecar"
+
+kubectl label ns openunison istio-injection=enabled
 
 echo "Pre-configuring OpenUnison LDAP"
 
-kubectl create -f ../../chapter5/myvd-book.yaml
+kubectl create -f ../chapter5/myvd-book.yaml
 
 echo "Deploying the OpenUnison Operator"
 
-helm install openunison $REPO_NAME/openunison-operator --namespace openunison 
+helm install openunison $REPO_NAME/openunison-operator --namespace openunison --set image=$OP_IMAGE
 
 echo "Creating the orchestra-secrets-source"
 
@@ -61,8 +65,6 @@ data:
    K8S_DB_SECRET: c3RhcnQxMjM=
    unisonKeystorePassword: cGFzc3dvcmQK
    AD_BIND_PASSWORD: c3RhcnQxMjM=
-   OU_JDBC_PASSWORD: c3RhcnR0MTIz
-   SMTP_PASSWORD: ZG9lc25vdG1hdHRlcg==
 kind: Secret
 EOF
 
@@ -76,8 +78,7 @@ echo "Generating helm chart values to /tmp/openunison-values.yaml"
 
 export hostip=$(hostname  -I | cut -f1 -d' ' | sed 's/[.]/-/g')
 
-
-sed "s/IPADDR/$hostip/g" < ./openunison-values.yaml  > /tmp/openunison-values.yaml
+sed "s/IPADDR/$hostip/g" < ./openunison-values.yaml > /tmp/openunison-values.yaml
 
 echo "Deploying Orchestra"
 
@@ -87,14 +88,15 @@ echo "Waiting for Orchestra to be running"
 
 while [[ $(kubectl get pods -l app=openunison-orchestra -n openunison -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do echo "waiting for orchestra to be running" && sleep 1; done
 
-echo "Sleeping for 10 seconds to let openunison catch up...."
-
-sleep 10s
-
 echo "Deploying the login portal"
 
 helm install orchestra-login-portal $REPO_NAME/orchestra-login-portal --namespace openunison -f /tmp/openunison-values.yaml
 
+echo "Copying ou-tls-certificate from openunison to istio-system namespaces"
+
+kubectl get secret ou-tls-certificate -n openunison -o yaml | sed 's/namespace: openunison/namespace: istio-system/g' | kubectl create -f -
+
+echo "Creating rolebinding"
 
 kubectl create -f - <<EOF
 apiVersion: rbac.authorization.k8s.io/v1
@@ -110,6 +112,7 @@ roleRef:
   name: cluster-admin
   apiGroup: rbac.authorization.k8s.io
 EOF
+
 
 echo "OpenUnison is deployed!"
 

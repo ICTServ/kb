@@ -35,6 +35,20 @@ echo "Adding helm repo"
 helm repo add $REPO_NAME $REPO_URL
 helm repo update
 
+echo "Deploying MariaDB"
+
+kubectl apply -f ./mariadb.yaml
+
+while [[ $(kubectl get pods -l app=mariadb -n mariadb -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do echo "waiting for mariadb to be running" && sleep 1; done
+
+echo "Sleeping for 10 seconds to let mariadb catch up...."
+
+sleep 10s
+
+echo "Deploying SMTP Blackhole"
+
+kubectl apply -f ./smtp-blackhole.yaml
+
 
 echo "Creating openunison namespace"
 
@@ -76,8 +90,9 @@ echo "Generating helm chart values to /tmp/openunison-values.yaml"
 
 export hostip=$(hostname  -I | cut -f1 -d' ' | sed 's/[.]/-/g')
 
+export unisonca=$(kubectl get secret ca-key-pair -n cert-manager -o json | jq -r '.data["tls.crt"]')
 
-sed "s/IPADDR/$hostip/g" < ./openunison-values.yaml  > /tmp/openunison-values.yaml
+sed "s/IPADDR/$hostip/g" < ./openunison-values.yaml | sed "s/UNISONCA/$unisonca/" > /tmp/openunison-values.yaml
 
 echo "Deploying Orchestra"
 
@@ -94,22 +109,6 @@ sleep 10s
 echo "Deploying the login portal"
 
 helm install orchestra-login-portal $REPO_NAME/orchestra-login-portal --namespace openunison -f /tmp/openunison-values.yaml
-
-
-kubectl create -f - <<EOF
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-   name: ou-cluster-admins
-subjects:
-- kind: Group
-  name: cn=k8s-cluster-admins,ou=Groups,DC=domain,DC=com
-  apiGroup: rbac.authorization.k8s.io
-roleRef:
-  kind: ClusterRole
-  name: cluster-admin
-  apiGroup: rbac.authorization.k8s.io
-EOF
 
 echo "OpenUnison is deployed!"
 
