@@ -26,7 +26,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v3.0.0-a
 
 echo "Deploying ActiveDirectory (ApacheDS)"
 
-kubectl apply -f ../../chapter5/apacheds.yaml
+kubectl apply -f https://raw.githubusercontent.com/ICTServ/kb/main/chapter5/apacheds.yaml
 
 while [[ $(kubectl get pods -l app=apacheds -n activedirectory -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do echo "waiting for apacheds to be running" && sleep 1; done
 
@@ -43,7 +43,7 @@ kubectl create ns openunison
 
 echo "Pre-configuring OpenUnison LDAP"
 
-kubectl create -f ../../chapter5/myvd-ameto.yaml
+kubectl create -f https://raw.githubusercontent.com/ICTServ/kb/main/chapter5/myvd-ameto.yaml
 
 echo "Deploying the OpenUnison Operator"
 
