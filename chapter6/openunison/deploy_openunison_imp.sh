@@ -32,7 +32,7 @@ while [[ $(kubectl get pods -l app=apacheds -n activedirectory -o 'jsonpath={..s
 
 echo "Adding helm repo"
 
-helm repo add $REPO_NAME $REPO_URL
+helm repo add tremolo https://nexus.tremolo.io/repository/helm
 helm repo update
 
 
@@ -81,7 +81,7 @@ sed "s/IPADDR/$hostip/g" < ./openunison-values.yaml  > /tmp/openunison-values.ya
 
 echo "Deploying Orchestra"
 
-helm install orchestra $REPO_NAME/orchestra --namespace openunison -f /tmp/openunison-values.yaml
+helm install orchestra tremolo/orchestra --namespace openunison -f https://raw.githubusercontent.com/ICTServ/kb/main/chapter5/openunison-values.yaml
 
 echo "Waiting for Orchestra to be running"
 
